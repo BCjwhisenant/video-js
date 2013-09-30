@@ -198,6 +198,30 @@ test('should allow the poster to be changed after init', function() {
   player.dispose();
 });
 
+test('should ignore setting an undefined poster after init', function() {
+  var tag, fixture, updatedPoster, originalPoster, player;
+  tag = PlayerTest.makeTag();
+  tag.setAttribute('poster', 'http://example.com/poster.jpg');
+  fixture = document.getElementById('qunit-fixture');
+
+  fixture.appendChild(tag);
+  player = new vjs.Player(tag, {
+    'techOrder': ['mediaFaker']
+  });
+
+  originalPoster = player.poster();
+
+  updatedPoster = undefined;
+  player.poster(updatedPoster);
+  strictEqual(player.poster(), originalPoster, 'the original poster is returned');
+  strictEqual(player.tech.el().poster, originalPoster, 'the poster attribute is unchanged');
+  strictEqual(fixture.querySelector('.vjs-poster').style.backgroundImage,
+              'url(' + originalPoster + ')',
+              'the poster div background is unchanged');
+
+  player.dispose();
+});
+
 test('should load a media controller', function(){
   var player = PlayerTest.makePlayer({
     preload: 'none',
